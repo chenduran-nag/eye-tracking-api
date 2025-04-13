@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+#videoFeed {
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+}
+
+#cursor {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eye Tracking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Eye Tracking Demo</h1>
+    <button id="calibrateBtn">Calibrate Center</button>
+    <div>
+        <img id="videoFeed" src="{{ url_for('video_feed') }}" alt="Video Feed">
+        <div id="cursor"></div>
+    </div>
+    <script>
+        const cursor = document.getElementById('cursor');
+        const calibrateBtn = document.getElementById('calibrateBtn');
+
+        calibrateBtn.addEventListener('click', () => {
+            fetch('/calibrate', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Calibration successful!');
+                    } else {
+                        alert('Calibration failed. Please try again.');
+                    }
+                });
+        });
+
+        async function updateCursor() {
+            try {
+                const res = await fetch('/predict_gaze');
+                const data = await res.json();
+                if (data.x !== -1 && data.y !== -1) {
+                    const x = data.x * window.innerWidth;
+                    const y = data.y * window.innerHeight;
+                    cursor.style.left = `${x}px`;
+                    cursor.style.top = `${y}px`;
+                }
+            } catch (error) {
+                console.error('Error fetching gaze data:', error);
+            }
+            requestAnimationFrame(updateCursor);
+        }
+
+        updateCursor();
+    </script>
+</body>
+</html>
